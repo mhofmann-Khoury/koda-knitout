@@ -1,0 +1,5 @@
+networkx~=3.2.1
+plotly~=5.22.0
+virtual-knitting-machine~=0.0.2
+knitout-interpreter~=0.0.2
+knit-graphs~=0.0.1
