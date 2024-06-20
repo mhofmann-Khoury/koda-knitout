@@ -15,7 +15,6 @@ class TestCarriage_Pass_Dependency_Graph_Generator(TestCase):
             print(line)
 
     def test_tube(self):
-        # TOdo: Tube opt did not retain a releasehook?
         cp_generator = self.generate_cp("tube.k")
         cp_generator.write_optimized_execution_order("tube_opt.k")
         cp_generator.visualize()
