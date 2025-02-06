@@ -1,5 +1,7 @@
 from unittest import TestCase
 
+from knit_script.interpret_knit_script import knit_script_to_knitout_to_dat
+from knitout_interpreter.knitout_compilers.compile_knitout import compile_knitout
 from knitout_interpreter.run_knitout import run_knitout
 
 from koda_knitout.carriage_pass_dependencies.Carriage_Pass_Dependency_Graph_Generator import Carriage_Pass_Dependency_Graph_Generator
@@ -13,6 +15,16 @@ class TestCarriage_Pass_Dependency_Graph_Generator(TestCase):
         cp_generator.visualize()
         for line in optimized_execution:
             print(line)
+
+    def test_half_rib_half_seed(self):
+        knit_script_to_knitout_to_dat("half_rib_half_seed.ks", "half_rib_half_seed.k", "half_rib_half_seed.dat",
+                                      pattern_is_filename=True, c=1, width=8, height=4)
+        cp_generator = self.generate_cp("half_rib_half_seed.k")
+        cp_generator.write_optimized_execution_order("half_rib_half_seed_opt.k")
+        compile_knitout("half_rib_half_seed_opt.k", "half_rib_half_seed_opt.dat")
+
+    def test_compile_half_rib_half_seed(self):
+        compile_knitout("half_rib_half_seed_opt.k", "half_rib_half_seed_opt.dat")
 
     def test_tube(self):
         cp_generator = self.generate_cp("tube.k")
