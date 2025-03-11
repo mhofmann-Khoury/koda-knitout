@@ -3,6 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
+
 name = "koda-knitout"
 dynamic = ["version"]
 description = 'KODA (Knitting Optimization by Dependency Analysis). A system for analyzing the dependencies between knitout operations executed on a knitting machine and supports the optimization of knitout programs using this dependency structure. '
@@ -10,7 +11,6 @@ omepage = "https://github.com/mhofmann-Khoury/koda-knitout"
 repository = "https://github.com/mhofmann-Khoury/koda-knitout"
 readme = "README.md"
 requires-python = ">=3.11"
-license = "MIT"
 keywords = ["knit", "machine knit", "textile", "Northeastern", "ACT Lab", "fabrication"]
 authors = [
   { name = "Megan Hofmann", email = "m.hofmann@northeastern.edu" },
@@ -34,7 +34,7 @@ dependencies = [
 
 [project.urls]
 Documentation = "https://github.com/mhofmann-Khoury/koda-knitout#readme"
-Issues = "hhttps://github.com/mhofmann-Khoury/koda-knitout/issues"
+Issues = "https://github.com/mhofmann-Khoury/koda-knitout/issues"
 Source = "https://github.com/mhofmann-Khoury/koda-knitout"
 
 [tool.hatch.version]
@@ -49,6 +49,7 @@ exclude = [
   "requirements.txt",
   ".gitignore",
 ]
+core-meta-data-version = "2.4"
 
 [tool.hatch.envs.types]
 extra-dependencies = [

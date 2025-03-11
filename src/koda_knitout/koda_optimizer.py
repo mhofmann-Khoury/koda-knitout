@@ -2,6 +2,7 @@ from knit_script.interpret_knit_script import knit_script_to_knitout
 from knitout_interpreter.knitout_compilers.compile_knitout import compile_knitout
 from knitout_interpreter.knitout_language.Knitout_Context import Knitout_Context
 from knitout_interpreter.knitout_operations.Header_Line import get_machine_header
+from knitout_interpreter.knitout_operations.Knitout_Line import Knitout_Line
 from knitout_interpreter.knitout_operations.carrier_instructions import Outhook_Instruction
 from knitout_interpreter.run_knitout import run_knitout
 
@@ -9,16 +10,16 @@ from koda_knitout.carriage_pass_dependencies.Carriage_Pass_Dependency_Graph_Gene
 from koda_knitout.knitout_dependencies.Knitout_Dependency_Graph_Generator import Knitout_Dependency_Graph_Generator
 
 
-def optimize_knitout_file(knitout_file: str, optimized_knitout_name: str, optimized_dat_name: str | None = None, visualize=False):
+def optimize_knitout_program(knitout_program: list[Knitout_Line],
+                             take_out_remaining_carriers: bool = True, visualize: bool = False) -> list[Knitout_Line]:
     """
-    Takes in a knitout file and generates an optimized version of the knitout file.
-    :param optimized_dat_name: The name of the dat file for the optimized knitout or None if not DAT file needs to be generated.
-    :param knitout_file: The knitout file to be optimized.
-    :param optimized_knitout_name: The name of the output file for the optimized instructions.
-    :param visualize: If set to true, visualizes the carriage pass dependencies for optimization debugging.
+
+    :param knitout_program: An ordered list of knitout operations to optimize.
+    :param take_out_remaining_carriers: If True, the optimized program will include outhooks to remove any remaining carriers after knitting.
+    :param visualize: If set to True, visualizes the carriage pass dependencies for optimization debugging.
+    :return: A list of knitout lines that will execute an optimized version of the input program.
     """
-    executed_program, machine, knit_graph = run_knitout(knitout_file)
-    knitout_dependency_graph_generator = Knitout_Dependency_Graph_Generator(executed_program)
+    knitout_dependency_graph_generator = Knitout_Dependency_Graph_Generator(knitout_program)
     cp_generator = Carriage_Pass_Dependency_Graph_Generator(knitout_dependency_graph_generator)
     if visualize:
         cp_generator.visualize()
@@ -27,8 +28,24 @@ def optimize_knitout_file(knitout_file: str, optimized_knitout_name: str, optimi
     executed_instructions, execution_machine, _knitgraph = context.execute_knitout_instructions(optimized_knitout)
     optimized_program = get_machine_header(execution_machine)
     optimized_program.extend(executed_instructions)
-    for cid in execution_machine.carrier_system.active_carriers:
-        optimized_program.append(Outhook_Instruction(cid, f"Take out remaining carriers"))
+    if take_out_remaining_carriers:
+        for cid in execution_machine.carrier_system.active_carriers:
+            optimized_program.append(Outhook_Instruction(cid, f"Take out remaining carriers"))
+    return optimized_program
+
+
+def optimize_knitout_file(knitout_file: str, optimized_knitout_name: str, optimized_dat_name: str | None = None,
+                          take_out_remaining_carriers: bool = True, visualize: bool = False):
+    """
+    Takes in a knitout file and generates an optimized version of the knitout file.
+    :param take_out_remaining_carriers: If True, the optimized program will include outhooks to remove any remaining carriers after knitting.
+    :param optimized_dat_name: The name of the dat file for the optimized knitout or None if not DAT file needs to be generated.
+    :param knitout_file: The knitout file to be optimized.
+    :param optimized_knitout_name: The name of the output file for the optimized instructions.
+    :param visualize: If set to true, visualizes the carriage pass dependencies for optimization debugging.
+    """
+    executed_program, machine, knit_graph = run_knitout(knitout_file)
+    optimized_program = optimize_knitout_program(executed_program, take_out_remaining_carriers, visualize)
     with open(optimized_knitout_name, 'w') as knitout_file:
         clean_instructions = [f"{str(i).splitlines()[0]}\n" for i in optimized_program]
         knitout_file.writelines(clean_instructions)

@@ -1,3 +1,5 @@
+"""Script for optimizing the benchmark files and recording timing data."""
+
 import csv
 import time
 
@@ -13,6 +15,13 @@ optimization_times = {}
 
 
 def optimize_knitout(k_file_name: str, optimized_filename: str, dat_file: str, get_seed: bool = False):
+    """
+    Optimizes the given knitout file and generates the resulting dat file. The optimization computing time is stored for data collection.
+    :param k_file_name: The name of the knitout file to optimize.
+    :param optimized_filename: The name of the knitout file to store the optimized instructions.
+    :param dat_file: The name of the dat file to generate from the optimized instructions.
+    :param get_seed: IF set to true, collect a seed for the file name.
+    """
     seed = 0
     if get_seed:
         seed = k_file_name[k_file_name.index('_s') + 2:]
@@ -60,7 +69,8 @@ def optimize_knitout(k_file_name: str, optimized_filename: str, dat_file: str, g
 
 def write_timing_data(csv_file: str, get_seed: bool = False):
     """
-    :param get_seed:
+    Outputs timing data from the optimization data to the csv file.
+    :param get_seed: If true, adds a seed to the csv file.
     :param csv_file: File to write the timing data to.
     """
     global optimization_data
@@ -78,55 +88,67 @@ def write_timing_data(csv_file: str, get_seed: bool = False):
 
 
 def optimize_lace():
+    """
+    Optimizes standard lace files and records their timing data.
+    """
     for i in range(10, 85, 8):
         optimize_knitout(f"no_opt_lace_{i}.k", f"opt_lace_{i}.k", f"opt_lace_{i}.dat")
     write_timing_data("lace_optimization_times.csv")
 
 
 def optimize_cable():
+    """
+    Optimizes standard cable files and records their timing data.
+    """
     for i in range(10, 85, 8):
         optimize_knitout(f"no_opt_cable_{i}.k", f"opt_cable_{i}.k", f"opt_cable_{i}.dat")
     write_timing_data("cable_optimization_times.csv")
 
 
 def optimize_color_rib():
+    """
+    Optimizes standard color-rib files and records their timing data.
+    """
     for i in range(10, 85, 8):
         optimize_knitout(f"no_opt_color_rib_{i}.k", f"opt_color_rib_{i}.k", f"opt_color_rib_{i}.dat")
     write_timing_data("color_rib_optimization_times.csv")
 
 
 def optimize_random_lace(size=82):
+    """
+    Optimizes the randomized lace pattern and records the timing data.
+    :param size: The size of the pattern to optimize.
+    """
     for i in range(1, 11):
         optimize_knitout(f"randomized_noopt_lace_w{size}_s{i}.k", f"rand_opt_lace_s{i}.k", f"rand_opt_lace_s{i}.dat", get_seed=True)
     write_timing_data("randomized_lace_timing_data.csv", get_seed=True)
 
 
 def optimize_random_cable(size=82):
+    """
+    Optimizes the randomized cable pattern and records the timing data.
+    :param size: The size of the pattern to optimize.
+    """
     for i in range(1, 11):
         optimize_knitout(f"randomized_noopt_cable_w{size}_s{i}.k", f"rand_opt_cable_s{i}.k", f"rand_opt_cable_s{i}.dat", get_seed=True)
     write_timing_data("randomized_cable_timing_data.csv", get_seed=True)
 
 
 def optimize_random_color_rib(size=82):
+    """
+    Optimizes the randomized color work pattern and records the timing data.
+    :param size: The size of the pattern to optimize.
+    """
     for i in range(1, 11):
         optimize_knitout(f"randomized_noopt_color_rib_w{size}_s{i}.k", f"rand_opt_color_s{i}.k", f"rand_opt_color_s{i}.dat", get_seed=True)
     write_timing_data("randomized_color_timing_data.csv", get_seed=True)
 
 
 def optimize_random(size=82):
+    """
+    Optimizes the randomized lace, cable, and color work pattern and records the timing data.
+    :param size: The size of the pattern to optimize.
+    """
     for i in range(1, 11):
         optimize_knitout(f"randomized_noopt_w{size}_s{i}.k", f"rand_opt_s{i}.k", f"rand_opt_s{i}.dat", get_seed=True)
     write_timing_data("randomized_all_timing_data.csv", get_seed=True)
-
-
-# optimize_lace()
-# optimize_cable()
-# optimize_color_rib()
-
-# optimize_random_lace()
-optimize_random_cable()
-# optimize_random_color_rib()
-# optimize_random()
-# optimize_knitout("no_opt_lace.k", "optimized_lace.k", "optimized_lace.dat")
-# optimize_knitout("no_opt_cable.k", "optimized_cable.k", "optimized_cable.dat")
-# optimize_knitout("no_opt_color_rib.k", "optimized_color_rib.k", "optimized_color_rib.dat")
